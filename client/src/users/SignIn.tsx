@@ -24,7 +24,7 @@ const SignIn = () => {
   }
 
   // 폼 제출 핸들러
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     // 유효성 검사
@@ -38,7 +38,8 @@ const SignIn = () => {
     }
 
     // 로그인 함수 호출 (성공하면 true)
-    const success = login({ username: username.trim(), password });
+    // login은 Promise를 돌려주므로 await로 결과를 기다립니다.
+    const success = await login({ username: username.trim(), password });
     if(!success){
       setError("아이디 또는 비밀번호가 올바르지 않습니다");
       return;

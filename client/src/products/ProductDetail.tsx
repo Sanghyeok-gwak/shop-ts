@@ -3,8 +3,7 @@ import { useParams } from "react-router-dom"
 import { useProduct } from "../context/ProductContext"
 import { useCart } from "../context/CartContext"
 
-// 이미지가 없는 상품에 보여 줄 기본 이미지
-const NO_IMAGE = "/images/no-image.png";
+const NO_IMAGE = "/images/no-image.png"
 
 const ProductDetail = () => {
   const {id} = useParams<{id: string}>()
