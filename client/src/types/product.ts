@@ -9,6 +9,15 @@ export interface Product {
   description: string;
   image?: string;  // 상품 이미지 경로 (없을 수도 있으므로 ? 선택 속성)
 }
+// 상품 등록 폼 입력값 타입
+export interface ProductForm{
+  pName: string,
+  category: Category,
+  price: number,
+  description: string,
+  image: string  // 선택한 이미지 경로 ("" = 선택 안 함)
+}
+
 
 // 상품 등록 시 입력받는 값
 // id는 자동으로 부여되므로 제외

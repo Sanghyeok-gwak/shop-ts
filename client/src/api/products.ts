@@ -10,6 +10,8 @@ interface ProductRow {
   image: string | null;  
 }
 
+
+
 const toProduct = (row: ProductRow): Product => ({
   id: row.id,
   pName: row.p_name,
