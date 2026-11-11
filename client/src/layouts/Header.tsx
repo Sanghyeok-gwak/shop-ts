@@ -1,21 +1,32 @@
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 import { useCart } from '../context/CartContext';
 import { useUser } from '../context/UserContext';
 
 const Header = () => {
-    const {totalQuantity} = useCart();
-    const { currentUser, logout } = useUser();
+    // totalQuantity() 가져오기
+    // 장바구니() -> 표시하기
+    const {totalQuantity, clearCart} = useCart();
+    const {currentUser, logout} = useUser();
 
-    // 관리자인지 확인 (로그아웃 상태면 currentUser가 null이므로 ?.로 접근)
-    const isAdmin = currentUser?.role === 'admin';
+    const navigate = useNavigate();
 
-    // 상품 등록은 관리자만 : 관리자가 아니면 링크 이동을 막고 안내
+    // 로그아웃 시 장바구니 비우고 상품 목록으로 이동
+    const handleLogout = () => {
+        clearCart();
+        logout();
+        navigate('/');
+    }
+
+    // 관리자인지 확인(isAdmin = true)
+    const isAdmin = currentUser?.role === "admin";
+
+    // 관리자가 아니면 링크 이동을 막고 안내(알림창)함
     const handleAddClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-        if (!isAdmin) {
+        if(!isAdmin){ 
             e.preventDefault();
-            alert('상품 등록은 관리자만 가능합니다.');
+            alert("상품 등록은 관리자만 가능합니다.");
         }
-    };
+    }
 
     return(
         <header className='header'>
@@ -26,15 +37,14 @@ const Header = () => {
                 <Link to='/'>상품 목록</Link>
                 <Link to='/product/new' onClick={handleAddClick}>상품 등록</Link>
                 <Link to='/cart'>장바구니({totalQuantity})</Link>
-                {/* 관리자에게만 관리자 메뉴 표시 */}
                 {isAdmin && <Link to='/admin'>관리자</Link>}
                 {currentUser ? (
                     <>
-                        <span>{currentUser.name}님</span>
-                        <button onClick={logout}>로그아웃</button>
+                        <Link to="/mypage">{currentUser.name}님</Link>
+                        <button onClick={handleLogout}>로그아웃</button>
                     </>
                 ) : (
-                    <Link to='/signin'>로그인</Link>
+                     <Link to='/signin'>로그인</Link>
                 )}
             </nav>
         </header>

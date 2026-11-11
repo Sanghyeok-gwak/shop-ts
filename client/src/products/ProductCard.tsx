@@ -1,44 +1,44 @@
-import { Link } from "react-router-dom";
-import type { Product } from "../types/product";
+import { Link, useNavigate } from "react-router-dom";
+import type {Product} from "../types/product"
 import { useCart } from "../context/CartContext";
+import { useUser } from "../context/UserContext";
 
-// ProductCard 컴포넌트 타입 정의
-interface ProductCard{
-  product: Product;
-}
+const NO_IMAGE = "/images/no-image.png";  //이미지가 없는 경우 저장값
 
-// 이미지가 없는 상품에 보여 줄 기본 이미지
-const NO_IMAGE = "/images/no-image.png";
+const ProductCard = ({product}: {product: Product}) => {
+    const { addToCart } = useCart();
+    const { currentUser } = useUser();
+    const navigate = useNavigate();
 
-const ProductCard = ({product}: ProductCard) => {
-  const { addToCart } = useCart(); // 장바구니 추가 함수 가져오기
+    // 담기 핸들러: 로그인하지 않은 경우 로그인 페이지로 이동
+    const handleAddToCart = () => {
+        if (!currentUser) {
+            alert("로그인이 필요합니다.");
+            navigate("/signin");
+            return;
+        }
+        addToCart(product.id, 1);
+        alert("상품이 장바구니에 담겼습니다.");
+    }
 
-  return(
-    <div className="product-card">
-      {/* 이미지를 누르면 상세 페이지로 이동
-          ?? - null 병합 연산자로, 왼쪽 값이 null이나 undefined일 때만
-          오른쪽 값 반환
-      */}
-      <Link to={`/product/${product.id}`}>
-        <img
-          className="product-card_img"
-          src={product.image ?? NO_IMAGE}
-          alt={product.pName}
-        />
-      </Link>
-      <span>{product.category}</span>
-      <h3><Link to={`/product/${product.id}`}>{product.pName}</Link></h3>
-      <p>{product.price.toLocaleString()}원</p>
-      <button 
-        onClick={() => {
-          addToCart(product.id, 1);
-          alert(`${product.pName} 상품이 장바구니에 담겼습니다.`);
-        }}
-      >
-        담기
-      </button>
-    </div>
-  )
+    return(
+        <div className="product-card"> 
+            <Link to={`/product/${product.id}`}>
+                {/* ?? - null 병합 연산자. 왼쪽값이 null 이거나 undefined 일 때 */}
+                <img 
+                    className="product-card_img"
+                    src={product.image ?? NO_IMAGE}
+                    alt={product.pName} 
+                />
+            </Link>
+            <span>{product.category}</span>
+            <h3>
+              <Link to={`/product/${product.id}`}>{product.pName}</Link>
+            </h3>
+            <p>{product.price.toLocaleString()}원</p>
+            <button onClick={handleAddToCart}>담기</button>
+        </div>
+    )
 }
 
 export default ProductCard;
