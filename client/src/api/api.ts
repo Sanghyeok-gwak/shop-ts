@@ -1,8 +1,11 @@
-import axios from 'axios';
+import axios from "axios";
 
-// 서버 주소를 한 곳에 모아 두고, 요청할 때는 '/products'처럼 뒷부분만 적습니다.
+export const SERVER_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000';
+
+// 서버 주소를 한 곳에 모아두고, 요청할 때 '/products' 부분만 적음
 const api = axios.create({
-  baseURL: 'http://localhost:8000/api',
+    baseURL: `${SERVER_URL}/api`,
+    withCredentials: true   //세션 쿠키(session.sid)를 함께 보냄
 });
 
 export default api;

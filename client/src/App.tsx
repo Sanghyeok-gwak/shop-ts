@@ -11,7 +11,7 @@ import UserProvider from './context/UserProvider'
 import SignUp from './users/SignUp'
 import SignIn from './users/SignIn'
 import AdminPage from './users/AdminPage'
-import EditProduct from './products/EditProduct.tsx'
+import EditProduct from './products/EditProduct'
 import MyPage from './users/MyPage'
 
 function App() {
