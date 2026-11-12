@@ -1,44 +1,71 @@
-import React, { useEffect, useState } from "react";
+
+import { useEffect, useState } from "react";
+import type { ReactNode } from "react";
 import type { Product, NewProduct } from "../types/product";
 import { ProductContext } from "./ProductContext";
-import { createProduct, deleteProduct, getProducts, modifyProduct } from "../api/products";
+import {
+  createProduct,
+  deleteProduct,
+  getProducts,
+  modifyProduct,
+} from "../api/products";
 
-const ProductProvider = ({ children }: { children: React.ReactNode }) => {
-  // 처음에는 빈 배열로 시작하고, 서버에서 받아 오면 채웁니다.
+
+
+
+const ProductProvider = ({children} : {children: React.ReactNode}) => {
   const [products, setProducts] = useState<Product[]>([]);
+  // 처음에는 불러오는 중(true), 응답을 받으면(성공/실패 모두) false
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // 화면이 처음 그려질 때 한 번 상품 목록을 불러옵니다.
+  // 상품 목록 불러오기(화면이 렌더링될때 한 번 가져옴)
   useEffect(() => {
-    getProducts()
-      .then(setProducts)
-      .catch((err) => console.log('상품 목록 조회 오류!', err));
+      getProducts()
+          .then(setProducts)
+          .catch(err => console.log("상품 목록 조회 오류", err))
+          .finally(() => setIsLoading(false));
   }, []);
 
-  // 상품 추가: 서버에 등록한 뒤, 서버가 만든 id를 받기 위해 목록을 다시 불러옵니다.
+  // 상품 추가
   const addProduct = async (newProduct: NewProduct) => {
     await createProduct(newProduct);
-    setProducts(await getProducts());
+    const updatedProducts = await getProducts();
+    setProducts(updatedProducts);
   };
 
-  // 상품 삭제: 서버에서 지운 뒤, 화면 목록에서도 뺍니다.
+  // 상품 삭제
   const removeProduct = async (productId: number) => {
     await deleteProduct(productId);
-    setProducts(products.filter((product) => product.id !== productId));
+
+    setProducts((prev) =>
+      prev.filter((product) => product.id !== productId)
+    );
   };
 
-  // 상품 수정: 서버에서 고친 뒤, 화면 목록에서도 같은 id의 상품을 바꿉니다.
+  // 상품 수정
   const updateProduct = async (updatedProduct: Product) => {
     await modifyProduct(updatedProduct);
-    setProducts(products.map((product) =>
-      product.id === updatedProduct.id ? updatedProduct : product
-    ));
+
+    setProducts((prev) =>
+      prev.map((product) =>
+        product.id === updatedProduct.id ? updatedProduct : product
+      )
+    );
   };
 
   return (
-    <ProductContext.Provider value={{ products, addProduct, removeProduct, updateProduct }}>
+    <ProductContext.Provider
+      value={{
+        products,
+        isLoading,
+        addProduct,
+        removeProduct,
+        updateProduct,
+      }}
+    >
       {children}
     </ProductContext.Provider>
   );
-}
+};
 
 export default ProductProvider;

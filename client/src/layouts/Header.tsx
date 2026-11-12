@@ -7,15 +7,7 @@ const Header = () => {
     // 장바구니() -> 표시하기
     const {totalQuantity, clearCart} = useCart();
     const {currentUser, logout} = useUser();
-
     const navigate = useNavigate();
-
-    // 로그아웃 시 장바구니 비우고 상품 목록으로 이동
-    const handleLogout = () => {
-        clearCart();
-        logout();
-        navigate('/');
-    }
 
     // 관리자인지 확인(isAdmin = true)
     const isAdmin = currentUser?.role === "admin";
@@ -27,6 +19,13 @@ const Header = () => {
             alert("상품 등록은 관리자만 가능합니다.");
         }
     }
+
+        // 로그아웃시 장바구니 비우기
+        const handleLogout = () => {
+            clearCart();
+            logout();
+            navigate('/'); // 상품 목록 페이지 이동
+        }
 
     return(
         <header className='header'>
@@ -40,11 +39,12 @@ const Header = () => {
                 {isAdmin && <Link to='/admin'>관리자</Link>}
                 {currentUser ? (
                     <>
-                        <Link to="/mypage">{currentUser.name}님</Link>
-                        <button onClick={handleLogout}>로그아웃</button>
+                        {/* 이름을 누르면 회원 정보 변경 화면으로 이동 */}
+                        <Link to='/mypage'>{currentUser.name}님</Link>
+                        <button onClick={logout}>로그아웃</button>
                     </>
                 ) : (
-                     <Link to='/signin'>로그인</Link>
+                    <Link to='/signin'>로그인</Link>
                 )}
             </nav>
         </header>

@@ -7,12 +7,18 @@ import { useUser } from "../context/UserContext"
 const NO_IMAGE = "/images/no-image.png";
 
 const ProductDetail = () => {
-  const {id} = useParams<{id: string}>()
-  const {products, removeProduct} = useProduct();
-  const { addToCart, removeFromCart } = useCart();
+  const {id} = useParams<{id: string}>();
+  const {products, isLoading, removeProduct} = useProduct();
+  const {addToCart, removeFromCart} = useCart();
   const { currentUser } = useUser();
   const navigate = useNavigate();
+  
+  // 상품 목록을 불러오는 동안에는 로딩 문구 표시
+  if(isLoading){
+      return <div>불러오는 중...</div>
+  }
 
+ 
   // 관리자에게만 수정 · 삭제 버튼을 보여 줍니다.
   const isAdmin = currentUser?.role === 'admin';
 

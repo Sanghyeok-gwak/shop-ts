@@ -1,14 +1,18 @@
 import type { Product, NewProduct } from "../types/product";
 import { createContext, useContext } from "react";
 
+
+
 // 상품 컨텍스트 타입 정의
-// 서버에 저장하므로 끝날 때까지 기다릴 수 있게 함수들이 Promise를 돌려줍니다.
-interface ProductContextType {
-  products: Product[];
-  addProduct: (newProduct: NewProduct) => Promise<void>;
+interface ProductContextType{
+  products: Product[];  //상품목록, 상품상세보기
+  isLoading: boolean;   //상품 목록 불러오는 중 여부
+  addProduct: (newProduct: NewProduct) => Promise<void>  // 상품 등록
   removeProduct: (productId: number) => Promise<void>;
   updateProduct: (updatedProduct: Product) => Promise<void>;
 }
+
+
 
 // 상품 컨텍스트 생성
 export const ProductContext = createContext<ProductContextType | null>(null);
